@@ -1,8 +1,2 @@
-flask==2.2.2
-gunicorn==20.1.0
-pytest
-pytest-cov
-python-dotenv
-pytest-mock
-Werkzeug==2.2.2
-httpx
+flask==3.1.2
+gunicorn==23.0.0
