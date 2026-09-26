@@ -120,9 +120,9 @@ section.panel { margin-bottom: 16px; }
 .health { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
 .health__value { font: 600 40px/1 var(--mono); letter-spacing: -0.03em; }
 .health__unit { color: var(--muted); font: 14px var(--mono); margin-left: 4px; }
-.health__stats { display: flex; gap: 14px; color: var(--muted); font-size: 13px; }
+.health__stats { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px 14px; color: var(--muted); font-size: 13px; }
 .health__stats b { color: var(--ink); font-family: var(--mono); font-weight: 500; }
-.bars { display: flex; align-items: flex-end; gap: 3px; height: 64px; margin-top: 16px; padding-bottom: 1px; border-bottom: 1px solid var(--line); }
+.bars { display: flex; align-items: flex-end; gap: 3px; height: 96px; margin-top: 16px; padding-bottom: 1px; border-bottom: 1px solid var(--line); }
 .bar { flex: 1 1 0; min-height: 3px; border-radius: 2px 2px 0 0; background: var(--accent); opacity: 0.85; transition: height 0.3s ease; }
 .bar--fail { background: var(--fail); }
 .bar--empty { background: var(--line); opacity: 1; }
