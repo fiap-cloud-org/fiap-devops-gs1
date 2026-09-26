@@ -1,0 +1,13 @@
+# Ambiente de produção: roda a imagem publicada pelo pipeline (gunicorn, sem debug).
+# Uso: DOCKERHUB_REPO=usuario/repositorio IMAGE_TAG=42 docker compose -f docker-compose.prod.yml up -d
+name: fiap-devops-gs1-prod
+
+services:
+  app:
+    image: ${DOCKERHUB_REPO:-william201192/fiap-devops-gs1}:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    environment:
+      APP_ENV: prod
+      PORT: "8000"
+    ports:
+      - "${APP_PORT:-8000}:8000"
