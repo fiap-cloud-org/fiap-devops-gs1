@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ status.app }} · status do deploy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap topbar__inner">
+      <div class="brand">
+        <span class="brand__mark" aria-hidden="true">GS1</span>
+        <div>
+          <div class="brand__name">{{ status.app }}</div>
+          <div class="brand__sub">Global Solution 1 · CI/CD e DevOps</div>
+        </div>
+      </div>
+      <div class="topbar__right">
+        <span class="pill pill--env">{{ status.environment }}</span>
+        <span class="pill pill--health" id="health-pill" data-state="checking">
+          <span class="dot" aria-hidden="true"></span>
+          <span id="health-label">verificando</span>
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <p class="eyebrow">Resposta da aplicação</p>
+      <h1 class="hero__title">{{ status.message }}</h1>
+      <p class="hero__lead">
+        Flask servido por gunicorn em <code>{{ status.host }}</code>,
+        publicado pelo pipeline do Jenkins no Azure Web App.
+      </p>
+    </section>
+
+    <section class="tiles" aria-label="Resumo da versão">
+      <article class="tile">
+        <span class="tile__label">Versão</span>
+        <span class="tile__value">{{ status.build or status.version }}</span>
+        <span class="tile__hint">{{ 'número do build no Jenkins' if status.build else 'fora do pipeline' }}</span>
+      </article>
+      <article class="tile">
+        <span class="tile__label">Commit</span>
+        <span class="tile__value mono">{{ status.commit or 'local' }}</span>
+        <span class="tile__hint">{{ 'GIT_COMMIT do build' if status.commit else 'sem commit associado' }}</span>
+      </article>
+      <article class="tile">
+        <span class="tile__label">Ambiente</span>
+        <span class="tile__value">{{ status.environment }}</span>
+        <span class="tile__hint">{{ status.platform }}</span>
+      </article>
+      <article class="tile">
+        <span class="tile__label">No ar há</span>
+        <span class="tile__value" id="uptime" data-seconds="{{ status.uptime_seconds }}">{{ status.uptime }}</span>
+        <span class="tile__hint">desde {{ status.started_at[11:16] }} UTC</span>
+      </article>
+    </section>
+
+    <section class="grid">
+      <article class="panel">
+        <header class="panel__head">
+          <h2>Pipeline desta versão</h2>
+          <span class="panel__meta">{{ ('Jenkins ' ~ status.build) if status.build else 'build local' }}</span>
+        </header>
+        <ol class="steps{{ '' if status.build else ' steps--idle' }}">
+          {% for stage in stages %}
+          <li class="step">
+            <span class="step__icon" aria-hidden="true">
+              <svg viewBox="0 0 16 16" width="12" height="12"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span class="step__name">{{ stage.name }}</span>
+            <span class="step__detail">{{ stage.detail }}</span>
+          </li>
+          {% endfor %}
+        </ol>
+        {% if not status.build %}
+        <p class="note">Rodando fora do pipeline: as etapas acima mostram o caminho que um build percorre até o Azure.</p>
+        {% endif %}
+      </article>
+
+      <article class="panel">
+        <header class="panel__head">
+          <h2>Health check</h2>
+          <span class="panel__meta">GET /health a cada 5 s</span>
+        </header>
+        <div class="health">
+          <div>
+            <span class="health__value" id="health-latency">··</span>
+            <span class="health__unit">ms</span>
+          </div>
+          <div class="health__stats">
+            <span><b id="health-avg">--</b> média</span>
+            <span><b id="health-max">--</b> máx</span>
+            <span><b id="health-ok">0</b> ok</span>
+            <span><b id="health-fail">0</b> falhas</span>
+          </div>
+        </div>
+        <div class="bars" id="bars" aria-label="Latência das últimas verificações"></div>
+        <p class="note" id="health-last">Aguardando a primeira verificação.</p>
+      </article>
+    </section>
+
+    <section class="panel">
+      <header class="panel__head">
+        <h2>Endpoints</h2>
+        <span class="panel__meta">Python {{ status.python }}</span>
+      </header>
+      <table class="endpoints">
+        <tbody>
+          <tr><td><span class="verb">GET</span> <code>/</code></td><td>Este painel</td></tr>
+          <tr><td><span class="verb">GET</span> <code>/health</code></td><td>Health check usado pelo painel e pelo container</td></tr>
+          <tr><td><span class="verb">GET</span> <code>/api/status</code></td><td>Versão, commit, ambiente e uptime em JSON</td></tr>
+          <tr><td><span class="verb">GET</span> <code>/api/hello</code></td><td>Resposta original do projeto: <code>{"message": "Hello Azure"}</code></td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer class="wrap footer">
+    William Coelho · RM 556336 · FIAP
+  </footer>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
