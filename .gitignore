@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Segredos e ambiente
+.env
+*.env
+!.env.example
+
+# Artefatos de build/deploy
+app.zip
+*.log
+
+# Sistema
+.DS_Store
+Thumbs.db
