@@ -9,7 +9,7 @@ pipeline {
     agent any
 
     parameters {
-        string(name: 'DOCKERHUB_REPO', defaultValue: 'william201192/fiap-devops-gs1', description: 'Repositório da imagem no Docker Hub (usuario/nome)')
+        string(name: 'DOCKERHUB_REPO', defaultValue: 'seu-usuario/fiap-devops-gs1', description: 'Repositório da imagem no Docker Hub (usuario/nome); troque pelo seu')
         string(name: 'AZURE_APP_NAME', defaultValue: 'fiap-devops-gs1', description: 'Nome do Azure Web App')
         string(name: 'AZURE_RG', defaultValue: 'rg-fiap-devops-gs1', description: 'Resource group do Web App')
         booleanParam(name: 'DEPLOY', defaultValue: true, description: 'Publicar a imagem e fazer o deploy no Azure')
