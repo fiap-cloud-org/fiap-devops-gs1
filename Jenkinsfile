@@ -63,7 +63,12 @@ pipeline {
 
         stage('Docker build') {
             steps {
-                sh 'docker build -t "$IMAGE" -t "${DOCKERHUB_REPO}:latest" .'
+                sh '''
+                    docker build \
+                        --build-arg APP_VERSION="$BUILD_NUMBER" \
+                        --build-arg GIT_COMMIT="${GIT_COMMIT:-}" \
+                        -t "$IMAGE" -t "${DOCKERHUB_REPO}:latest" .
+                '''
             }
         }
 
@@ -91,9 +96,9 @@ pipeline {
                     sh '''
                         az login --service-principal -u "$AZURE_CLIENT_ID" -p "$AZURE_CLIENT_SECRET" --tenant "$AZURE_TENANT_ID" --output none
                         rm -f app.zip
-                        zip -r app.zip main.py requirements.txt
+                        zip -r app.zip main.py requirements.txt templates static
                         az webapp config appsettings set --resource-group "$AZURE_RG" --name "$AZURE_APP_NAME" --output none \
-                            --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true
+                            --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true APP_ENV=prod APP_VERSION="$BUILD_NUMBER" GIT_COMMIT="${GIT_COMMIT:-}"
                         az webapp config set --resource-group "$AZURE_RG" --name "$AZURE_APP_NAME" --output none \
                             --startup-file "gunicorn --bind=0.0.0.0 --timeout 600 main:app"
                         az webapp deploy --resource-group "$AZURE_RG" --name "$AZURE_APP_NAME" --src-path app.zip --type zip
