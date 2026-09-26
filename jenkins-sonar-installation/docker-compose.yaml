@@ -1,0 +1,71 @@
+# Jenkins + SonarQube + PostgreSQL para o pipeline do Jenkinsfile.
+# Uso: cp .env.example .env (troque a senha) && docker compose up -d --build
+name: fiap-devops-gs1-ci
+
+services:
+  jenkins:
+    build: .
+    image: fiap-devops-gs1/jenkins:lts
+    container_name: fiap-devops-gs1-jenkins
+    user: root
+    restart: unless-stopped
+    ports:
+      - "${JENKINS_HTTP_PORT:-8080}:8080"
+      - "${JENKINS_AGENT_PORT:-50000}:50000"
+    environment:
+      TZ: America/Sao_Paulo
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - jenkins_home:/var/jenkins_home
+    networks:
+      - ci
+
+  sonarqube:
+    image: sonarqube:lts-community
+    container_name: fiap-devops-gs1-sonarqube
+    restart: unless-stopped
+    depends_on:
+      sonar_db:
+        condition: service_healthy
+    ports:
+      - "${SONAR_PORT:-9001}:9000"
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://sonar_db:5432/${SONAR_DB_NAME:-sonar}
+      SONAR_JDBC_USERNAME: ${SONAR_DB_USER:-sonar}
+      SONAR_JDBC_PASSWORD: ${SONAR_DB_PASSWORD:?defina SONAR_DB_PASSWORD no .env}
+      SONAR_SEARCH_JAVAADDITIONALOPTS: -Dnode.store.allow_mmap=false
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+    networks:
+      - ci
+
+  sonar_db:
+    image: postgres:15
+    container_name: fiap-devops-gs1-sonar-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${SONAR_DB_USER:-sonar}
+      POSTGRES_PASSWORD: ${SONAR_DB_PASSWORD:?defina SONAR_DB_PASSWORD no .env}
+      POSTGRES_DB: ${SONAR_DB_NAME:-sonar}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - sonar_db_data:/var/lib/postgresql/data
+    networks:
+      - ci
+
+networks:
+  ci:
+    driver: bridge
+
+volumes:
+  jenkins_home:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
+  sonar_db_data:
