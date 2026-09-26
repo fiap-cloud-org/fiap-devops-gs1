@@ -1,0 +1,17 @@
+# Ambiente de desenvolvimento: servidor do Flask com reload e o código montado no container.
+# Uso: docker compose -f docker-compose.dev.yml up --build
+name: fiap-devops-gs1-dev
+
+services:
+  app:
+    build: .
+    image: fiap-devops-gs1:dev
+    command: ["python", "main.py"]
+    environment:
+      APP_ENV: dev
+      FLASK_DEBUG: "1"
+      PORT: "8000"
+    volumes:
+      - ./:/app
+    ports:
+      - "${APP_PORT:-8000}:8000"
