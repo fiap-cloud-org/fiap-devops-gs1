@@ -50,7 +50,7 @@ A versão e o commit chegam pelas variáveis `APP_VERSION` e `GIT_COMMIT`: o Jen
 | Push para o Docker Hub | `docker login --password-stdin` com a credencial `dockerhub` |
 | Deploy no Azure Web App | `az login` com Service Principal, zip da aplicação, *startup command* do gunicorn e `az webapp deploy` |
 
-Parâmetros do job: `DOCKERHUB_REPO` (padrão `william201192/fiap-devops-gs1`), `AZURE_APP_NAME`, `AZURE_RG` e `DEPLOY` (ligado por padrão; desligado, o pipeline para depois do `docker build`).
+Parâmetros do job: `DOCKERHUB_REPO` (no formato `usuario/nome`; troque o padrão `seu-usuario/fiap-devops-gs1` pelo seu usuário), `AZURE_APP_NAME`, `AZURE_RG` e `DEPLOY` (ligado por padrão; desligado, o pipeline para depois do `docker build`).
 
 ### Stack de CI (`jenkins-sonar-installation/`)
 

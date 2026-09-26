@@ -4,7 +4,7 @@ name: fiap-devops-gs1-prod
 
 services:
   app:
-    image: ${DOCKERHUB_REPO:-william201192/fiap-devops-gs1}:${IMAGE_TAG:-latest}
+    image: ${DOCKERHUB_REPO:-local/fiap-devops-gs1}:${IMAGE_TAG:-latest}
     restart: unless-stopped
     environment:
       APP_ENV: prod
