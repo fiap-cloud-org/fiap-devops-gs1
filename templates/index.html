@@ -112,6 +112,10 @@
         <span class="panel__meta">Python {{ status.python }}</span>
       </header>
       <table class="endpoints">
+        <caption class="sr-only">Rotas HTTP expostas pela aplicação</caption>
+        <thead class="sr-only">
+          <tr><th scope="col">Rota</th><th scope="col">Descrição</th></tr>
+        </thead>
         <tbody>
           <tr><td><span class="verb">GET</span> <code>/</code></td><td>Este painel</td></tr>
           <tr><td><span class="verb">GET</span> <code>/health</code></td><td>Health check usado pelo painel e pelo container</td></tr>
